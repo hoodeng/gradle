@@ -16,6 +16,7 @@
 package org.gradle.internal.resource.transport.http
 
 import org.apache.http.auth.AuthScope
+import org.apache.http.client.config.CookieSpecs
 import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.ssl.SSLContexts
 import org.gradle.api.artifacts.repositories.PasswordCredentials
@@ -109,5 +110,17 @@ public class HttpClientConfigurerTest extends Specification {
 
         then:
         httpClientBuilder.userAgent == UriTextResource.userAgentString
+    }
+
+    def "configures http client with standard cookie policy"() {
+        httpSettings.authenticationSettings >> []
+        httpSettings.proxySettings >> proxySettings
+        httpSettings.sslContextFactory >> sslContextFactory
+
+        when:
+        configurer.configure(httpClientBuilder)
+
+        then:
+        httpClientBuilder.defaultRequestConfig.cookieSpec == CookieSpecs.STANDARD
     }
 }
