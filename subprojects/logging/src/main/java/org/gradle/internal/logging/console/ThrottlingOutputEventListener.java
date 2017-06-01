@@ -18,6 +18,8 @@ package org.gradle.internal.logging.console;
 
 import org.gradle.internal.logging.events.BatchOutputEventListener;
 import org.gradle.internal.logging.events.EndOutputEvent;
+import org.gradle.internal.logging.events.LogLevelChangeEvent;
+import org.gradle.internal.logging.events.MaxWorkerCountChangeEvent;
 import org.gradle.internal.logging.events.OutputEvent;
 import org.gradle.internal.logging.events.OutputEventListener;
 import org.gradle.internal.time.TimeProvider;
@@ -55,6 +57,10 @@ public class ThrottlingOutputEventListener implements OutputEventListener {
 
     public void onOutput(OutputEvent newEvent) {
         synchronized (lock) {
+            if (newEvent instanceof LogLevelChangeEvent || newEvent instanceof MaxWorkerCountChangeEvent) {
+                listener.onOutput(newEvent);
+                return;
+            }
             queue.add(newEvent);
 
             if (newEvent instanceof EndOutputEvent) {
