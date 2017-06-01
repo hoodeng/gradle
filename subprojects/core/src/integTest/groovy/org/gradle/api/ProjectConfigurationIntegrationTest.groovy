@@ -26,6 +26,8 @@ class ProjectConfigurationIntegrationTest extends AbstractIntegrationSpec {
             println "the name: " + tasks.getByPath(":foobar").name
         """
 
+        executer.requireIsolatedDaemons().requireDaemon()
+
         when:
         run()
 
